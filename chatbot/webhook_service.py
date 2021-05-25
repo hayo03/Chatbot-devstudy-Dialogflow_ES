@@ -2,11 +2,11 @@ import json
 
 from flask import request, jsonify, make_response
 from flask import Flask
-from flask_cors import CORS
+#from flask_cors import CORS
 from flask import Response
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 
 from api_manager import invoke_api
 
