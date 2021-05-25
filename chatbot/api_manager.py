@@ -31,9 +31,9 @@ def get_latitude_longitude(City):
     #print('Latitude = {}, Longitude = {}'.format(location.latitude, location.longitude))
     Geo_adress={'Latitude':location.latitude,'Longitude': location.longitude}
     return Geo_adress
-def invoke_api(fulfillment, slots_values_list):
-    print("\n\n\n\n\n=========> CALL API ",fulfillment)
-    if fulfillment == "SearchBusiness_fulfillment":
+def invoke_api(intent, slots_values_list):
+    print("\n\n\n\n\n=========> CALL API ",intent)
+    if intent == "SearchBusiness":
         url = 'https://api.yelp.com/v3/businesses/search?term=[%term%]&location=[%location%]&limit=1'
         headers = {}
         term = ''
@@ -62,7 +62,7 @@ def invoke_api(fulfillment, slots_values_list):
                 return jsonResult['message']
             except KeyError as error:
                 return "Something went wrong in the third-party API"
-    if fulfillment == "GetWeather_fulfillment":
+    if intent == "GetWeather":
         for slot in slots:
              if slot['name']=="city":
                  q=str(slot['value'])
@@ -78,7 +78,7 @@ def invoke_api(fulfillment, slots_values_list):
         else:
             return "Something wrong with the API."
 
-    if fulfillment == "BookDoctorAppointment_fulfillment":
+    if intent== "BookDoctorAppointment":
          reply = "Done! Your appointment with Dr. [%doctorname%] on [%Appointmentdate%] is scheduled. You will receive a confirmation email shortly"
          for slot in slots_values_list:
             if slot['name'] == "Appointmentdate": 
@@ -87,7 +87,7 @@ def invoke_api(fulfillment, slots_values_list):
             print(reply)
          return reply
 
-    if fulfillment=="SearchCinema_fulfillment":
+    if intent=="SearchCinema":
         location = ''
         apikey=''
         for slot in slots_values_list:
@@ -120,7 +120,7 @@ def invoke_api(fulfillment, slots_values_list):
                 reply = "Sorry, there is no cinema that matches your request"
                 return reply
 
-    if fulfillment == "BookTaxi_fulfillment":
+    if intent == "BookTaxi":
         reply = "Done! I booked a taxi on [%pickupDate%] at [%pickupTime%] from [%pickupAddress%] to [%dropoffAddress%]."
         for slot in slots_values_list:
             if slot['name'] == "pickupDate":
@@ -131,14 +131,14 @@ def invoke_api(fulfillment, slots_values_list):
             reply = reply.replace('[%{}%]'.format(slot['name']),
                               slot['value'] if not isinstance(slot['value'], list) else '+'.join(slot['value']))
         return reply
-    if fulfillment=="FindDoctor_fulfillment":
+    if intent=="FindDoctor":
         City = ''
         Dtype = ''
         apikey=''
         for slot in slots_values_list:
-            if slot['name'] == 'City':
+            if slot['name'] == 'city':
                 City = slot['value']   
-            elif slot['name'] =='Type'and slot['value']=='Dentist':
+            elif slot['name'] =='type'and slot['value']=='Dentist':
                  Dtype = slot['value']
             else: 
                  Dtype = 'Doctor'
@@ -173,7 +173,7 @@ def invoke_api(fulfillment, slots_values_list):
                 
         else:
             return jsonResult['message'] 
-    if fulfillment == "CheckDoctorAvailabilities_fulfillment":
+    if intent == "CheckDoctorAvailabilities":
         free_days = [['Monday', 'Wednesday', ' and Thursday'], ['Tuesday','Friday',' and Saturday'], ['Thursday','Friday',' and Sunday'], ['Tuesday',' and Friday']]
         dr_free_days = random.choice(free_days)
         result  = '{"DRCalendar": {"date": "['+''.join(dr_free_days)+']"}}'
@@ -187,7 +187,7 @@ def invoke_api(fulfillment, slots_values_list):
         result = 'The doctor will be available on: '+ res
         return result
  
-    if fulfillment == "ReserveRoundtripFlights_fulfillment":
+    if intent == "ReserveRoundtripFlights":
         reply="Done! I have booked your flight tickets for [%departureDate%] to [%returnDate%], flying from [%originLocation%] to [%destinationLocation%]."
         for slot in slots_values_list:
             if slot['name'] in {'departureDate','returnDate'}:
@@ -195,7 +195,7 @@ def invoke_api(fulfillment, slots_values_list):
             reply = reply.replace('[%{}%]'.format(slot['name']), slot['value'])
         print(reply)
         return reply
-    if fulfillment == "ReserveHotel_fulfillment":
+    if intent == "ReserveHotel":
         reply="Done! Your booking in [%city%] for [%checkInDate%] to [%checkOutDate%] is confirmed."
         for slot in slots_values_list:
             if slot['name'] in {'checkInDate','checkOutDate'}:
