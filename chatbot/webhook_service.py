@@ -14,11 +14,11 @@ from api_manager import invoke_api
 @app.route('/my_webhook', methods=['POST'])
 def post_webhook_dialogflow():
     body = request.get_json(silent=True)
-    session_id = body['detect_intent_response_id.response_id']
-    intent = body['intent_info']['display_name']
+    session_id = body['session']
+    intent = body['queryResult']['intent']['displayName']
     slots = []
 
-    for key, value in body['intent_info']['parameters'].items():
+    for key, value in body['queryResult']['parameters'].items():
         if len(str(value)) > 0:
             slots.append({'name':key,'value':value})
            
@@ -30,10 +30,28 @@ def post_webhook_dialogflow():
 
 
 def answer_webhook(msg, session_id, user_intent):
-    message={"fulfillment_response":
-             {"messages":[msg]}
+    message = {
+        "fulfillmentText": msg,
+        "fulfillmentMessages": [
+            {
+                "simpleResponses": {
+                    "simpleResponses": [
+                        {
+                            "textToSpeech": msg,
+                            "displayText": msg
+                        }
+
+                    ]
+                }
+            }
+        ],
+        # "source": "example.com",
+        "outputContexts": [
+            {
+                "name": '{}/contexts/{}'.format(session_id, user_intent),
+                "lifespanCount": 5,
+            }]
     }
- 
     return Response(json.dumps(message), 200, mimetype='application/json')
 
 
