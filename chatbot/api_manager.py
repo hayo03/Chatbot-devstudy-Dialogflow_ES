@@ -63,7 +63,7 @@ def invoke_api(intent, slots_values_list):
             except KeyError as error:
                 return "Something went wrong in the third-party API"
     if intent == "GetWeather":
-        for slot in slots:
+        for slot in slots_values_list:
              if slot['name']=="city":
                  q=str(slot['value'])
         appid=getAPI_credential('api.openweathermap','appid')
